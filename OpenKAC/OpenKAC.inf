@@ -1,0 +1,77 @@
+;
+; OpenKAC.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System ; TODO: specify appropriate Class
+ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=OpenKAC.cat
+DriverVer=04/24/2024,1.0.0.0
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+OpenKAC_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+OpenKAC.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%OpenKAC.DeviceDesc%=OpenKAC_Device, Root\OpenKAC ; TODO: edit hw-id
+
+[OpenKAC_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+OpenKAC.sys
+
+;-------------- Service installation
+[OpenKAC_Device.NT.Services]
+AddService = OpenKAC,%SPSVCINST_ASSOCSERVICE%, OpenKAC_Service_Inst
+
+; -------------- OpenKAC driver install sections
+[OpenKAC_Service_Inst]
+DisplayName    = %OpenKAC.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\OpenKAC.sys
+
+;
+;--- OpenKAC_Device Coinstaller installation ------
+;
+
+[OpenKAC_Device.NT.CoInstallers]
+AddReg=OpenKAC_Device_CoInstaller_AddReg
+CopyFiles=OpenKAC_Device_CoInstaller_CopyFiles
+
+[OpenKAC_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[OpenKAC_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[OpenKAC_Device.NT.Wdf]
+KmdfService =  OpenKAC, OpenKAC_wdfsect
+[OpenKAC_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "OpenKAC Installation Disk"
+OpenKAC.DeviceDesc = "OpenKAC Device"
+OpenKAC.SVCDESC = "OpenKAC Service"
