@@ -19,9 +19,9 @@ Environment:
 #include <ntifs.h>
 #include <ntdef.h>
 
-#include "driver.h"
+#include "driver.hpp"
 #include "driver.tmh"
-#include "ioctls.h"
+#include "ioctls.hpp"
 #include <intsafe.h>
 #include <handleapi.h>
 extern "C" {

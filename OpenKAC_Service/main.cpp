@@ -5,7 +5,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "def.h"
+#include "def.hpp"
 
 DWORD ServiceHandlerProc(DWORD dwControl,DWORD dwEventType,LPVOID lpEventData,LPVOID lpContext)
 {

@@ -1,11 +1,12 @@
-#include <argh.h>
-#include "ioctls.h"
 #include <iostream>
 #include <filesystem>
 #include <set>
 #include <psapi.h>
 #include <tchar.h>
-#include "def.h"
+#include <argh.h>
+
+#include "def.hpp"
+#include "ioctls.hpp"
 
 bool SendProcID(HANDLE driver,HANDLE proc) {
 	ioctls::Rqdata data = {};
