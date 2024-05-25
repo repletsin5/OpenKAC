@@ -37,9 +37,9 @@ extern "C" {
     DRIVER_UNLOAD UnloadDriver;
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text (INIT, DriverEntry)
-#pragma alloc_text( PAGE, CreateClose)
-#pragma alloc_text( PAGE, DeviceControl)
-#pragma alloc_text( PAGE, UnloadDriver)
+#pragma alloc_text(PAGE, CreateClose)
+#pragma alloc_text(PAGE, DeviceControl)
+#pragma alloc_text(PAGE, UnloadDriver)
 #endif
 }
 extern "C" NTSTATUS NTAPI MmCopyVirtualMemory(PEPROCESS srcProc, PVOID srcAddr, PEPROCESS targProc,
@@ -225,8 +225,9 @@ DeviceControl(
     }
                           
     const ULONG ctrlCode = stackLocation->Parameters.DeviceIoControl.IoControlCode;
-    if ((UINT64)data->reseivebuf > (UINT64)0x7FFFFFFFFFFF || (UINT64)data->reseivebuf == (UINT64)0) {
-        DbgPrintEx(0, 0, "[OpenKAC] Invalid Address of send buffer is: 0x%x\n", data->reseivebuf);
+    //check for invalid address
+    if ((UINT64)data->receivebuf > (UINT64)0x7FFFFFFFFFFF || (UINT64)data->receivebuf == (UINT64)0) {
+        DbgPrintEx(0, 0, "[OpenKAC] Invalid Address of send buffer is: 0x%x\n", data->receivebuf);
         SENDBACK(KAC_INVALID_DATA_ADDRESS);
     }
     switch (ctrlCode)
@@ -240,15 +241,16 @@ DeviceControl(
             SENDBACK(KAC_INCORRECT_DATA_SIZE);
         }
         else {
-            DbgPrintEx(0, 0, "[OpenKAC] Setting process to: 0x%x\n", data->reseivebuf);
-            PsLookupProcessByProcessId(data->reseivebuf, &proc);          
+            DbgPrintEx(0, 0, "[OpenKAC] Setting process to: 0x%x\n", data->receivebuf);
+            PsLookupProcessByProcessId(data->receivebuf, &proc);
+            //TODO protect process e.g. hide thread names
             SENDBACK(0);
         }
     
         break;
     case ioctls::heartbeat:
         if (proc == 0) {
-            DbgPrintEx(0, 0, "[OpenKAC] No process for heartbeat: 0x%x\n", data->reseivebuf);
+            DbgPrintEx(0, 0, "[OpenKAC] No process for heartbeat: 0x%x\n", data->receivebuf);
             SENDBACK(0);
         }
         if (data->size != sizeof(INT64)) {

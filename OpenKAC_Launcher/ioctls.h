@@ -12,7 +12,7 @@ namespace ioctls {
 
 	struct Rqdata {
 		PVOID sendbuf;
-		PVOID reseivebuf;
+		PVOID receivebuf;
 		SIZE_T size;
 		SIZE_T ret;
 	};

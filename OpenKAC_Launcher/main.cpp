@@ -10,21 +10,20 @@
 bool SendProcID(HANDLE driver,HANDLE proc) {
 	ioctls::Rqdata data = {};
 	data.sendbuf = new INT64();
-	data.reseivebuf = new INT64();
+	data.receivebuf = new INT64();
 	data.size = sizeof(INT64);
 	data.ret = 0;
 	(*(INT64*)data.sendbuf) = (LONG_PTR)proc;
 	std::cout << "created data buffer " << std::hex << proc << std::dec << std::endl;
 
 	auto ret = DeviceIoControl(driver, ioctls::setProcess, &data, sizeof(data), &data, sizeof(data), 0, 0);
-	std::cout << std::hex << (*(INT64*)data.reseivebuf) << std::endl;
+	std::cout << std::hex << (*(INT64*)data.receivebuf) << std::endl;
 	return ret;
 }
 #define DRIVER_FILE_LOC "C:\\Program Files\\OpenKAC\\"
 
 
-int blacklisteddriver() {
-#define ARRAY_SIZE 1024
+int BlackListedDriver() {
 
 	DWORD bytesNeeded = 0;
 	DWORD numServices = 0;
@@ -64,7 +63,7 @@ int blacklisteddriver() {
 		{
 			std::cout << "found: " << pEnum[i].lpServiceName << std::endl;
 			CloseServiceHandle(scm);
-			return KAC_ENUM_DRV_FAIL;
+			return KAC_ENUM_DRV_BLACKLISTED;
 		}
 	}
 	CloseServiceHandle(scm);
@@ -82,9 +81,19 @@ int main(int argc, char** argv) {
 	}
 
 	//std::filsy
-		
-	blacklisteddriver();
-
+	auto bldRes = BlackListedDriver();
+	switch (bldRes)
+	{
+	case KAC_ENUM_DRV_PASS:
+		break;
+	case KAC_ENUM_DRV_BLACKLISTED:
+		// TODO send info to user
+		exit(0);
+		break;
+	default:
+		std::cout << "Checking for backlisted driver failed: " << std::hex << bldRes << std::dec << std::endl;
+		break;
+	}
 	//TODO call execute OpenKAC_Service.
 
 	auto driver = CreateFile(L"\\\\.\\OpenKAC",GENERIC_READ,0,0,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,0);
