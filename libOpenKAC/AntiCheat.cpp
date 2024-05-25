@@ -20,7 +20,7 @@ AntiCheat::~AntiCheat()
 
 bool AntiCheat::Heartbeat() 
 {
-
+	return false;
 }
 
 void AntiCheat::CreateHandleVerifyThread()

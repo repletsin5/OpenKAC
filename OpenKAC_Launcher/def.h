@@ -1,0 +1,5 @@
+#pragma once
+
+#define KAC_ENUM_DRV_PASS 0x00000000
+#define KAC_ENUM_DRV_FAIL 0x00000001
+#define KAC_ENUM_DRV_FAIL 0x00000001

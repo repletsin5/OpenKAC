@@ -23,5 +23,8 @@
     <ClInclude Include="ioctls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

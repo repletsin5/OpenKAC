@@ -19,9 +19,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Inf Include="OpenKAC.inf">
       <Filter>Driver Files</Filter>
     </Inf>
@@ -33,11 +30,11 @@
     <ClInclude Include="Public.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ioctls.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Trace.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -46,7 +46,6 @@ extern "C" NTSTATUS NTAPI MmCopyVirtualMemory(PEPROCESS srcProc, PVOID srcAddr, 
     PVOID targAddr, SIZE_T bufSize, KPROCESSOR_MODE prevMode, PSIZE_T retSize);
 
 
-extern "C" NTSTATUS NTAPI * PsTerminateProcess(__in PEPROCESS Process, __in NTSTATUS ExitStatus);
 
 
 
@@ -172,20 +171,23 @@ UnloadDriver(
 }
 
 
+NTSTATUS Sendback(int sendValue, ioctls::Rqdata** pdata,HANDLE caller, PIRP &Irp) {
+    ioctls::Rqdata* data = *pdata;
+    size_t bytes; 
+    PEPROCESS callerprocess; 
+    PsLookupProcessByProcessId(caller, &callerprocess); 
+    data->ret = sizeof(int); 
+    auto status = MmCopyVirtualMemory((PEPROCESS)PsGetCurrentProcess(), (void*)&sendValue, callerprocess, (void*)data->sendbuf, data->ret, KernelMode, &bytes); 
+    if (!NT_SUCCESS(status)) {        
+        TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "MmCopyVirtualMemory Failed %!STATUS!", status); 
+        return STATUS_UNSUCCESSFUL; 
+        IoCompleteRequest(Irp, IO_NO_INCREMENT); 
+    }
+    IoCompleteRequest(Irp, IO_NO_INCREMENT); 
+    return STATUS_SUCCESS;
+}
 
-#define SENDBACK(sendValue) int val = sendValue;\
-    size_t bytes;\
-    PEPROCESS callerprocess;\
-    PsLookupProcessByProcessId(caller, &callerprocess);\
-    data->ret = sizeof(int);\
-    status = MmCopyVirtualMemory((PEPROCESS)PsGetCurrentProcess(), (void*)&val, callerprocess, (void*)data->sendbuf, data->ret, KernelMode, &bytes);\
-    if (!NT_SUCCESS(status)){\
-    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "MmCopyVirtualMemory Failed %!STATUS!", status);\
-    return STATUS_UNSUCCESSFUL;\
-    IoCompleteRequest(Irp, IO_NO_INCREMENT);\
-    }\
-    IoCompleteRequest(Irp, IO_NO_INCREMENT);\
-    return STATUS_SUCCESS
+#define SENDBACK(sendValue) Sendback(sendValue,&data,caller, Irp);
 
 
 
@@ -254,10 +256,9 @@ DeviceControl(
         }
         if (caller != PsGetProcessId(proc)) {
             DbgPrintEx(0, 0, "[OpenKAC] Other process called heartbeat killing both\n");
-            PsTerminateProcess(proc,0);
-            PEPROCESS callerPEProc;
-            PsLookupProcessByProcessId(caller, &callerPEProc);
-            PsTerminateProcess(callerPEProc,0);
+            auto hdl = PsGetProcessId(proc);
+            ZwTerminateProcess(hdl,0);
+            ZwTerminateProcess(caller,0);
             DbgPrintEx(0, 0, "[OpenKAC] Unloading\n");
             //ZwUnloadDriver()
         }

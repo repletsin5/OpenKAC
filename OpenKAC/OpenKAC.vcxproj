@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Driver.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,7 +47,7 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -59,7 +56,7 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Universal</DriverTargetPlatform>
+    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
@@ -89,10 +86,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
@@ -115,9 +116,12 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <WppTraceFunction>
+      </WppTraceFunction>
+      <WppMinimalRebuildFromTracking>true</WppMinimalRebuildFromTracking>
     </ClCompile>
     <DriverSign>
-      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+      <FileDigestAlgorithm>sha512</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,9 +133,12 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <WppTraceFunction>
+      </WppTraceFunction>
+      <WppMinimalRebuildFromTracking>true</WppMinimalRebuildFromTracking>
     </ClCompile>
     <DriverSign>
-      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+      <FileDigestAlgorithm>sha512</FileDigestAlgorithm>
     </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">

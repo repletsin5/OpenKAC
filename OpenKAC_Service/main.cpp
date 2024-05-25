@@ -7,14 +7,14 @@
 
 #include "def.h"
 
-DWORD ServiceHandlerProc(
-	DWORD    dwControl,
-	DWORD    dwEventType,
-	LPVOID   lpEventData,
-	LPVOID   lpContext
-)
+DWORD ServiceHandlerProc(DWORD dwControl,DWORD dwEventType,LPVOID lpEventData,LPVOID lpContext)
 {
+	UNREFERENCED_PARAMETER(dwControl);
+	UNREFERENCED_PARAMETER(dwEventType);
+	UNREFERENCED_PARAMETER(lpEventData);
+	UNREFERENCED_PARAMETER(lpContext);
 
+	return 0;
 }
 
 bool CreateKACService() {
@@ -32,7 +32,6 @@ bool CreateKACService() {
 			else {
 				std::cout << "Failed to create service";
 				CloseServiceHandle(scm);
-
 			}
 
 		}
@@ -54,16 +53,27 @@ BYTE ServiceExists() {
 			return KAC_OPENSERVICE_FAIL;
 		else
 		{
-			return	TRUE;
+			return TRUE;
 		}
 	}
 	else
 		return KAC_SCMANGER_FAIL;
 }
 void ServiceProc(DWORD dwNumServicesArgs, LPSTR* lpServiceArgVectors) {
+
+	UNREFERENCED_PARAMETER(dwNumServicesArgs);
+	UNREFERENCED_PARAMETER(lpServiceArgVectors);
+
 	SERVICE_STATUS_HANDLE status = RegisterServiceCtrlHandlerExA(KAC_SERVICE_PROC_NAME,&ServiceHandlerProc,0);
+	if (status != 0) {
+
+	}
 	if (ServiceExists() == FALSE) {
 		CreateKACService();
+	}
+	else {
+		// why are we here, we shouldn't be. 
+	
 	}
 }
 
@@ -75,14 +85,14 @@ int main(int argc, char** argv) {
 
 	if (!IsWindows10OrGreater()) {
 		MessageBoxA(0, "Only supports Windows 10 or greater", "Error", MB_OK);
-		return;
+		return 0;
 	}
 	SERVICE_TABLE_ENTRYA ste;
 	ste.lpServiceName = KAC_SERVICE_PROC_NAME;
 	ste.lpServiceProc = &ServiceProc;
 	if (StartServiceCtrlDispatcherA(&ste)) {
 		//TODO: error handling
-		return;
+		return 0;
 	}
 
 }
