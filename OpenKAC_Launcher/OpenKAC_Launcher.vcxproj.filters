@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ioctls.h">
+    <ClInclude Include="ioctls.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="def.h">
+    <ClInclude Include="def.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
