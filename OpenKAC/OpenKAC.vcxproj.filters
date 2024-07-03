@@ -17,6 +17,12 @@
       <UniqueIdentifier>{8E41214B-6785-4CFE-B992-037D68949A14}</UniqueIdentifier>
       <Extensions>inf;inv;inx;mof;mc;</Extensions>
     </Filter>
+    <Filter Include="Header Files\runtime">
+      <UniqueIdentifier>{0611affb-6aca-45db-a560-78fb95d25e8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\runtime">
+      <UniqueIdentifier>{532aa3ba-488f-46e3-a6fb-42d7d56fa6d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="OpenKAC.inf">
@@ -24,22 +30,28 @@
     </Inf>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Driver.h">
+    <ClInclude Include="Driver.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Public.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ioctls.h">
+    <ClInclude Include="ioctls.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Trace.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="AntiCheat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Driver.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core.cpp">
+      <Filter>Source Files\runtime</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

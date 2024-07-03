@@ -24,6 +24,7 @@ Environment:
 #include "ioctls.hpp"
 #include <intsafe.h>
 #include <handleapi.h>
+#include "AntiCheat.h"
 extern "C" {
     DRIVER_INITIALIZE DriverEntry;
 
@@ -62,6 +63,7 @@ DriverEntry(
     PDEVICE_OBJECT  deviceObject = NULL;   
 
     UNREFERENCED_PARAMETER(RegistryPath);
+    PAGED_CODE();
 
     RtlInitUnicodeString(&ntUnicodeString, NT_DEVICE_NAME);
     //
@@ -113,7 +115,10 @@ DriverEntry(
         IoDeleteDevice(deviceObject);
     }
 
-    RtlFreeUnicodeString(&ntWin32NameString);
+
+
+   // RtlFreeUnicodeString(&ntWin32NameString);
+
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
 
@@ -166,22 +171,22 @@ UnloadDriver(
         IoDeleteDevice(deviceObject);
     }
 
-    RtlFreeUnicodeString(&uniWin32NameString);
+//    RtlFreeUnicodeString(&uniWin32NameString);
 
 }
 
 
-NTSTATUS Sendback(int sendValue, ioctls::Rqdata** pdata,HANDLE caller, PIRP &Irp) {
+NTSTATUS Sendback(UINT64 sendValue, ioctls::Rqdata** pdata,HANDLE caller, PIRP &Irp) {
     ioctls::Rqdata* data = *pdata;
     size_t bytes; 
     PEPROCESS callerprocess; 
     PsLookupProcessByProcessId(caller, &callerprocess); 
-    data->ret = sizeof(int); 
-    auto status = MmCopyVirtualMemory((PEPROCESS)PsGetCurrentProcess(), (void*)&sendValue, callerprocess, (void*)data->sendbuf, data->ret, KernelMode, &bytes); 
+    data->ret = sizeof(UINT64);
+    auto status = MmCopyVirtualMemory((PEPROCESS)PsGetCurrentProcess(), (void*)&sendValue, callerprocess, (void*)data->receivebuf, data->ret, KernelMode, &bytes); 
     if (!NT_SUCCESS(status)) {        
-        TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "MmCopyVirtualMemory Failed %!STATUS!", status); 
+        TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "MmCopyVirtualMemory Failed %!STATUS!", status);
+        IoCompleteRequest(Irp, IO_NO_INCREMENT);
         return STATUS_UNSUCCESSFUL; 
-        IoCompleteRequest(Irp, IO_NO_INCREMENT); 
     }
     IoCompleteRequest(Irp, IO_NO_INCREMENT); 
     return STATUS_SUCCESS;
@@ -221,42 +226,50 @@ DeviceControl(
     HANDLE caller = (HANDLE)(LONG_PTR)IoGetRequestorProcessId(Irp);
     if (caller == ((HANDLE)(LONG_PTR)ULONG_MAX) || caller == INVALID_HANDLE_VALUE || caller == 0) {
         TraceEvents(TRACE_LEVEL_ERROR, TRACE_DRIVER, "Your HANDLE count is very high. Returing due to API only supporting ULONG %!STATUS!", status);
-        return STATUS_UNSUCCESSFUL;
+        KdBreakPoint();
+        KeBugCheckEx(KMODE_EXCEPTION_NOT_HANDLED, 0, 0, 0, 0);
+       // return STATUS_UNSUCCESSFUL;
     }
                           
     const ULONG ctrlCode = stackLocation->Parameters.DeviceIoControl.IoControlCode;
     //check for invalid address
     if ((UINT64)data->receivebuf > (UINT64)0x7FFFFFFFFFFF || (UINT64)data->receivebuf == (UINT64)0) {
-        DbgPrintEx(0, 0, "[OpenKAC] Invalid Address of send buffer is: 0x%x\n", data->receivebuf);
-        SENDBACK(KAC_INVALID_DATA_ADDRESS);
+        DbgPrintEx(0, 0, "[OpenKAC] Invalid Address of send buffer is: 0x%llx\n", (UINT64)data->receivebuf);
+        KdBreakPoint();
+        return SENDBACK(KAC_INVALID_DATA_ADDRESS);
     }
     switch (ctrlCode)
     {
     case ioctls::setProcess:
         if (proc != 0) {
             DbgPrintEx(0, 0, "[OpenKAC] Process Already set\n");
-            SENDBACK(KAC_PROCCESS_ALREADY_SET);
+            return SENDBACK(KAC_PROCCESS_ALREADY_SET);
         }
         if (data->size != sizeof(INT64)) {
-            SENDBACK(KAC_INCORRECT_DATA_SIZE);
+            return SENDBACK(KAC_INCORRECT_DATA_SIZE);
         }
         else {
-            DbgPrintEx(0, 0, "[OpenKAC] Setting process to: 0x%x\n", data->receivebuf);
+            DbgPrintEx(0, 0, "[OpenKAC] Setting process to: 0x%llx\n", (UINT64)data->receivebuf);
             PsLookupProcessByProcessId(data->receivebuf, &proc);
             //TODO protect process e.g. hide thread names
-            SENDBACK(0);
+            //OpenKAC::AntiCheat* ac = new OpenKAC::AntiCheat(proc);
+            //DbgPrintEx(0, 0, "[OpenKAC] AC addr is: 0x%x\n", ac);
+            return SENDBACK(1);
         }
     
         break;
     case ioctls::heartbeat:
         if (proc == 0) {
-            DbgPrintEx(0, 0, "[OpenKAC] No process for heartbeat: 0x%x\n", data->receivebuf);
-            SENDBACK(0);
+            DbgPrintEx(0, 0, "[OpenKAC] No process for heartbeat: 0x%llx\n", (UINT64)data->receivebuf);
+            //TODO new error value
+            return SENDBACK(0);
         }
         if (data->size != sizeof(INT64)) {
-            SENDBACK(KAC_INCORRECT_DATA_SIZE);
+            return SENDBACK(KAC_INCORRECT_DATA_SIZE);
         }
         if (caller != PsGetProcessId(proc)) {
+            return SENDBACK(0);
+            //TODO:
             DbgPrintEx(0, 0, "[OpenKAC] Other process called heartbeat killing both\n");
             auto hdl = PsGetProcessId(proc);
             ZwTerminateProcess(hdl,0);

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AntiCheat.h">
+    <ClInclude Include="AntiCheat.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

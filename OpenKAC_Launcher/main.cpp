@@ -1,6 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <set>
+#include <thread>
 #include <Windows.h>
 #include <psapi.h>
 #include <tchar.h>
@@ -12,15 +13,18 @@
 
 bool SendProcID(HANDLE driver,HANDLE proc) {
 	ioctls::Rqdata data = {};
-	data.sendbuf = new INT64();
-	data.receivebuf = new INT64();
-	data.size = sizeof(INT64);
+	data.sendbuf = new UINT64();
+	data.receivebuf = new UINT64();
+	data.size = sizeof(UINT64);
 	data.ret = 0;
-	(*(INT64*)data.sendbuf) = (LONG_PTR)proc;
-	std::cout << "created data buffer " << std::hex << proc << std::dec << std::endl;
+	(*(UINT64*)data.sendbuf) = (LONG_PTR)proc;
+	std::cout << "created data buffer " << std::hex << &data << std::dec << std::endl;
 
 	auto ret = DeviceIoControl(driver, ioctls::setProcess, &data, sizeof(data), &data, sizeof(data), 0, 0);
-	std::cout << std::hex << (*(INT64*)data.receivebuf) << std::endl;
+	if (*(UINT64*)data.receivebuf == 1) {
+
+	} {
+	}
 	return ret;
 }
 #define DRIVER_FILE_LOC "C:\\Program Files\\OpenKAC\\"
@@ -112,14 +116,21 @@ int main(int argc, char** argv) {
 	CreateProcessA((std::string(DRIVER_FILE_LOC) + "OpenKAC_Service.exe").c_str(), 0, 0, 0, 0, CREATE_NEW_PROCESS_GROUP, 0,0,&si,&pi);
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
-
-	driver = CreateFile(L"\\\\.\\OpenKAC", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-	if (driver == INVALID_HANDLE_VALUE) {
-		std::cout << "Driver not running." << std::endl;
-		std::cin.get();
-		//exit(0);
+	if (pi.hProcess != INVALID_HANDLE_VALUE) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		int msTime = 0;
+		while (driver == INVALID_HANDLE_VALUE && msTime < 5000) {
+			constexpr static int ms = 5;
+			std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+			msTime += ms;
+			driver = CreateFile(L"\\\\.\\OpenKAC", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		}
+		if (driver == INVALID_HANDLE_VALUE) {
+			std::cout << "Driver not started.Please re-install, if you still get this error report on the github." << std::endl;
+			std::cin.get();
+			exit(0);
+		}
 	}
-
 	HANDLE proc = (HANDLE)GetCurrentProcessId();
 	std::cout << "sending proc: " << std::hex << proc << std::dec << std::endl;
 	SendProcID(driver, proc);
