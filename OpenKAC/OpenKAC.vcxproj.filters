@@ -42,7 +42,7 @@
     <ClInclude Include="Trace.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="AntiCheat.h">
+    <ClInclude Include="AntiCheat.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -52,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="core.cpp">
       <Filter>Source Files\runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="AntiCheat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ioctls.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AntiCheat.cpp" />
     <ClCompile Include="core.cpp" />
     <ClCompile Include="Driver.cpp" />
+    <ClCompile Include="ioctls.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AntiCheat.h" />
+    <ClInclude Include="AntiCheat.hpp" />
     <ClInclude Include="Driver.hpp" />
     <ClInclude Include="ioctls.hpp" />
     <ClInclude Include="Public.h" />
@@ -91,6 +93,7 @@
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <DiagnosticMode>true</DiagnosticMode>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
@@ -112,7 +115,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WppEnabled>true</WppEnabled>
+      <WppEnabled>false</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
@@ -121,15 +124,19 @@
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <WppTraceFunction>
       </WppTraceFunction>
-      <WppMinimalRebuildFromTracking>true</WppMinimalRebuildFromTracking>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
     </ClCompile>
     <DriverSign>
-      <FileDigestAlgorithm>sha512</FileDigestAlgorithm>
+      <FileDigestAlgorithm>SHA512</FileDigestAlgorithm>
     </DriverSign>
+    <Link>
+      <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>Aux_Klib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WppEnabled>true</WppEnabled>
+      <WppEnabled>false</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
@@ -138,11 +145,15 @@
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <WppTraceFunction>
       </WppTraceFunction>
-      <WppMinimalRebuildFromTracking>true</WppMinimalRebuildFromTracking>
+      <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
     </ClCompile>
     <DriverSign>
-      <FileDigestAlgorithm>SHA1</FileDigestAlgorithm>
+      <FileDigestAlgorithm>SHA512</FileDigestAlgorithm>
     </DriverSign>
+    <Link>
+      <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>Aux_Klib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
