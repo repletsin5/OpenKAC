@@ -20,15 +20,71 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AntiCheat.cpp" />
-    <ClCompile Include="core.cpp" />
+    <ClCompile Include="BlackBone\Dispatch.c" />
+    <ClCompile Include="BlackBone\Inject.c" />
+    <ClCompile Include="BlackBone\ldrreloc.c" />
+    <ClCompile Include="BlackBone\Loader.c" />
+    <ClCompile Include="BlackBone\MMap.c" />
+    <ClCompile Include="BlackBone\NotifyRoutine.c" />
+    <ClCompile Include="BlackBone\Private.c" />
+    <ClCompile Include="BlackBone\Remap.c" />
+    <ClCompile Include="BlackBone\Routines.c" />
+    <ClCompile Include="BlackBone\Utils.c" />
+    <ClCompile Include="BlackBone\VadHelpers.c" />
+    <ClCompile Include="BlackBone\VadRoutines.c" />
     <ClCompile Include="Driver.cpp" />
+    <ClCompile Include="DriverVerification.cpp" />
+    <ClCompile Include="Integrity.cpp" />
     <ClCompile Include="ioctls.cpp" />
+    <ClCompile Include="KPDB\kpdb.c" />
+    <ClCompile Include="KPDB\ntutils.c" />
+    <ClCompile Include="KPDB\tpi.c" />
+    <ClCompile Include="runtime\memory.cpp" />
+    <ClCompile Include="runtime\Helpers.cpp" />
+    <ClCompile Include="Solar\Solar.cpp" />
+    <ClCompile Include="Solar\Solar_ioctls.cpp" />
+    <ClCompile Include="Solar\Hardware\Solar_PCIE.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AntiCheat.hpp" />
+    <ClInclude Include="BlackBone\apiset.h" />
+    <ClInclude Include="BlackBone\BlackBoneDef.h" />
+    <ClInclude Include="BlackBone\BlackBoneDrv.h" />
+    <ClInclude Include="BlackBone\Imports.h" />
+    <ClInclude Include="BlackBone\Loader.h" />
+    <ClInclude Include="BlackBone\NativeEnums.h" />
+    <ClInclude Include="BlackBone\NativeStructs.h" />
+    <ClInclude Include="BlackBone\NativeStructs10.h" />
+    <ClInclude Include="BlackBone\NativeStructs7.h" />
+    <ClInclude Include="BlackBone\NativeStructs8.h" />
+    <ClInclude Include="BlackBone\NativeStructs81.h" />
+    <ClInclude Include="BlackBone\PEStructs.h" />
+    <ClInclude Include="BlackBone\Private.h" />
+    <ClInclude Include="BlackBone\Remap.h" />
+    <ClInclude Include="BlackBone\Routines.h" />
+    <ClInclude Include="BlackBone\Utils.h" />
+    <ClInclude Include="BlackBone\VadHelpers.h" />
+    <ClInclude Include="BlackBone\VadRoutines.h" />
+    <ClInclude Include="Defs.h" />
     <ClInclude Include="Driver.hpp" />
+    <ClInclude Include="DriverVerification.hpp" />
+    <ClInclude Include="Integrity.hpp" />
     <ClInclude Include="ioctls.hpp" />
+    <ClInclude Include="KPDB\kpdb.h" />
+    <ClInclude Include="KPDB\ntutils.h" />
+    <ClInclude Include="KPDB\tpi.h" />
+    <ClInclude Include="memory.hpp" />
+    <ClInclude Include="Solar\Hardware\Solar_PCIE.hpp" />
     <ClInclude Include="Public.h" />
+    <ClInclude Include="runtime\Helpers.h" />
+    <ClInclude Include="runtime\Helpers.hpp" />
+    <ClInclude Include="runtime\lonesha256.h" />
+    <ClInclude Include="runtime\StackMaster.hpp" />
+    <ClInclude Include="skCrypter.h" />
+    <ClInclude Include="Solar\Hardware\HWID\Solar_HWID.hpp" />
+    <ClInclude Include="Solar\Solar.hpp" />
+    <ClInclude Include="Solar\Solar_ioctls.hpp" />
+    <ClInclude Include="Solar\Solar_Status.hpp" />
     <ClInclude Include="Trace.h" />
   </ItemGroup>
   <ItemGroup>
@@ -42,7 +98,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">x64</Platform>
     <RootNamespace>OpenKAC</RootNamespace>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -51,8 +107,12 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
+    <_NT_TARGET_VERSION>0xA000008</_NT_TARGET_VERSION>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -60,9 +120,12 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>KMDF</DriverType>
-    <DriverTargetPlatform>Desktop</DriverTargetPlatform>
+    <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
     <_NT_TARGET_VERSION>0xA000008</_NT_TARGET_VERSION>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
+    <ALLOW_DATE_TIME>1</ALLOW_DATE_TIME>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -94,12 +157,19 @@
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <DiagnosticMode>true</DiagnosticMode>
+    <IncludePath>$(ProjectDir);$(IncludePath);$(SolutionDir)include;$(SolutionDir)\KLIB</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
     <Inf2CatUseLocalTime>true</Inf2CatUseLocalTime>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <IncludePath>$(ProjectDir);$(IncludePath);$(SolutionDir)include;$(SolutionDir)\KLIB</IncludePath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+    <DiagnosticMode>true</DiagnosticMode>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
@@ -113,6 +183,10 @@
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WppEnabled>false</WppEnabled>
@@ -120,18 +194,25 @@
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <WppTraceFunction>
       </WppTraceFunction>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <PreprocessorDefinitions>_WIN10_;_WIN64;_AMD64_;AMD64;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <DriverSign>
       <FileDigestAlgorithm>SHA512</FileDigestAlgorithm>
     </DriverSign>
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Aux_Klib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Aux_Klib.lib;cng.lib;Ntstrsafe.lib;NtosKrnl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,18 +222,26 @@
       <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
       <TreatWarningAsError>false</TreatWarningAsError>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <WppTraceFunction>
       </WppTraceFunction>
       <WppMinimalRebuildFromTracking>false</WppMinimalRebuildFromTracking>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <PreprocessorDefinitions>_WIN10_;_WIN64;_AMD64_;AMD64;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <DriverSign>
       <FileDigestAlgorithm>SHA512</FileDigestAlgorithm>
     </DriverSign>
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Aux_Klib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Aux_Klib.lib;cng.lib;Ntstrsafe.lib;NtosKrnl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -179,6 +268,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <FilesToPackage Include="$(TargetPath)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KLIB\KLIB.vcxproj">
+      <Project>{6830d72d-b920-6cbc-3d3b-fb6febf39121}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BlackBone\Licence.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

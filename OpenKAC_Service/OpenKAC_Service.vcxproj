@@ -75,6 +75,7 @@
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <CharacterSet>Unicode</CharacterSet>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -84,6 +85,7 @@
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
     <CharacterSet>Unicode</CharacterSet>
     <Driver_SpectreMitigation>Spectre</Driver_SpectreMitigation>
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>

@@ -9,11 +9,20 @@ namespace ioctls {
 		CTL_CODE(FILE_DEVICE_UNKNOWN, 0x9f8f01, METHOD_BUFFERED, FILE_SPECIAL_ACCESS);
 	inline constexpr ULONG detectstatus =
 		CTL_CODE(FILE_DEVICE_UNKNOWN, 0x9f8f02, METHOD_BUFFERED, FILE_SPECIAL_ACCESS);
-
+	inline constexpr ULONG umACmodule =
+		CTL_CODE(FILE_DEVICE_UNKNOWN, 0x9f8f03, METHOD_BUFFERED, FILE_SPECIAL_ACCESS);
+	inline constexpr ULONG pdbFiles =
+		CTL_CODE(FILE_DEVICE_UNKNOWN, 0x9f8f04, METHOD_BUFFERED, FILE_SPECIAL_ACCESS);
 	struct Rqdata {
 		PVOID sendbuf;
 		PVOID receivebuf;
 		SIZE_T size;
 		SIZE_T ret;
 	};
+	typedef struct _PDB_Info {
+		UINT16 nameLen;
+		char* moduleName;
+		UINT32 pdbLen;
+		void* dataPtr;
+	}PDB_Info, * PPDB_Info;
 }

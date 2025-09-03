@@ -1,9 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-
 class AntiCheat {
-
 public:
 	AntiCheat();
 

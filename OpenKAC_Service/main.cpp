@@ -6,9 +6,11 @@
 #include <filesystem>
 #include <tchar.h>
 #include <strsafe.h>
+#include <format>
+#include <sddl.h>
 SERVICE_STATUS svcStatus;
 SERVICE_STATUS_HANDLE svcStatusHandle;
-HANDLE svsEvent = 0 ;
+HANDLE svsEvent = 0;
 #include "def.hpp"
 VOID ReportSvcStatus(DWORD dwCurrentState,
 	DWORD dwWin32ExitCode,
@@ -26,7 +28,7 @@ void WINAPI ServiceHandlerProc(DWORD dwControl)
 		SetEvent(svsEvent);
 		ReportSvcStatus(svcStatus.dwCurrentState, NO_ERROR, 0);
 
-		return; 
+		return;
 
 	case SERVICE_CONTROL_INTERROGATE:
 		break;
@@ -38,17 +40,16 @@ void WINAPI ServiceHandlerProc(DWORD dwControl)
 	return;
 }
 
-bool CreateKACService() {
-	std::filesystem::path sysFile("C:\\Program Files\\OpenKAC\\OpenKAC.sys");
-	if (std::filesystem::exists(sysFile) && std::filesystem::is_regular_file(sysFile)) {
+bool CreateDriverService() {
+	std::filesystem::path File("C:\\Program Files\\OpenKAC\\OpenKAC.sys");
+	if (std::filesystem::exists(File) && std::filesystem::is_regular_file(File)) {
 		auto scm = OpenSCManagerA(0, 0, SC_MANAGER_ALL_ACCESS);
 		if (scm) {
-			auto svs = CreateServiceA(scm, KAC_SERVICE_NAME, KAC_SERVICE_DISPLAY_NAME, SERVICE_ALL_ACCESS,
+			auto svs = CreateServiceA(scm, KAC_DRV_NAME, KAC_DRV_DISPLAY_NAME, SERVICE_ALL_ACCESS,
 				SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
-				sysFile.string().c_str(), NULL, NULL, NULL, NULL, NULL
+				File.string().c_str(), NULL, NULL, NULL, NULL, NULL
 			);
 			if (svs) {
-				//TODO:
 				std::cout << "Created service" << std::endl;
 				return true;
 			}
@@ -56,23 +57,20 @@ bool CreateKACService() {
 				std::cout << "Failed to create service" << std::endl;
 				CloseServiceHandle(scm);
 			}
-
 		}
 		else return false;
 	}
-	else
-		return false;
-
+	return false;
 }
- 
-BYTE ServiceExists() {
+
+BYTE DriverServiceExists() {
 	auto scm = OpenSCManagerA(0, 0, SC_MANAGER_ALL_ACCESS);
 	if (scm) {
-		auto svs = OpenServiceA(scm, KAC_SERVICE_NAME, SC_MANAGER_ALL_ACCESS);
-		if (svs == 0 && GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST ) {
+		auto svs = OpenServiceA(scm, KAC_DRV_NAME, SC_MANAGER_ALL_ACCESS);
+		if (svs == 0 && GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST) {
 			return FALSE;
 		}
-		else if(svs == 0)
+		else if (svs == 0)
 			return KAC_OPENSERVICE_FAIL;
 		else
 		{
@@ -82,7 +80,6 @@ BYTE ServiceExists() {
 	else
 		return KAC_SCMANGER_FAIL;
 }
-
 VOID ReportSvcStatus(DWORD dwCurrentState,
 	DWORD dwWin32ExitCode,
 	DWORD dwWaitHint)
@@ -109,11 +106,18 @@ VOID ReportSvcStatus(DWORD dwCurrentState,
 }
 
 void ServiceProc(DWORD dwNumServicesArgs, LPSTR* lpServiceArgVectors) {
+#ifdef _DEBUG
+	AllocConsole();
+	FILE* fDummy;
+	freopen_s(&fDummy, "CONIN$", "r", stdin);
+	freopen_s(&fDummy, "CONOUT$", "w", stderr);
+	freopen_s(&fDummy, "CONOUT$", "w", stdout);
+#endif // _DEBUG
 
 	UNREFERENCED_PARAMETER(dwNumServicesArgs);
 	UNREFERENCED_PARAMETER(lpServiceArgVectors);
 
-	svcStatusHandle = RegisterServiceCtrlHandlerA(KAC_SERVICE_NAME,ServiceHandlerProc);
+	svcStatusHandle = RegisterServiceCtrlHandlerA(KAC_SERVICE_NAME, ServiceHandlerProc);
 	if (svcStatusHandle != 0) {
 		svcStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
 		svcStatus.dwServiceSpecificExitCode = 0;
@@ -133,15 +137,45 @@ void ServiceProc(DWORD dwNumServicesArgs, LPSTR* lpServiceArgVectors) {
 	}
 	ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
+	if (DriverServiceExists() == FALSE) {
+		CreateDriverService();
+	}
+
+	auto scm = OpenSCManagerA(0, 0, SC_MANAGER_ALL_ACCESS);
+	if (scm) {
+		auto svs = OpenServiceA(scm, KAC_DRV_NAME, SC_MANAGER_ALL_ACCESS);
+		if (svs == 0 && GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST) {
+			MessageBoxA(0, "Can't get OpenKAC Driver service. It doesn't exsist", "OpenKAC Error", MB_OK);
+
+			ReportSvcStatus(SERVICE_STOPPED, ERROR_SERVICE_DOES_NOT_EXIST, 0);
+			return;
+		}
+		else if (svs == 0) {
+			MessageBoxA(0, "Can't get OpenKAC Driver service", "OpenKAC Error", MB_OK);
+			ReportSvcStatus(SERVICE_STOPPED, -1, 0);
+			return;
+		}
+		std::cout << "Starting Driver Service" << std::endl;
+		if (StartServiceA(svs, 0, 0) == 0) {
+			auto err = GetLastError();
+			MessageBoxA(0, std::format("StartService failed : {}", err).c_str(), "OpenKAC Error", MB_OK);
+			ReportSvcStatus(SERVICE_STOPPED, err, 0);
+			return;
+		}
+		CloseServiceHandle(svs);
+		//CloseServiceHandle(scm);
+	}
+	else {
+		MessageBoxA(0, "Can't open services manager", "OpenKAC Error", MB_OK);
+		ReportSvcStatus(SERVICE_STOPPED, -1, 0);
+	}
 	while (1)
 	{
-	
 		WaitForSingleObject(svsEvent, INFINITE);
 
 		ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
 
 		return;
-
 	}
 }
 
@@ -155,7 +189,7 @@ VOID SvsReportEvent(LPTSTR szFunction)
 
 	if (NULL != hEventSource)
 	{
-		StringCchPrintfA(Buffer, 80,"%s failed with %d", szFunction, GetLastError());
+		StringCchPrintfA(Buffer, 80, "%s failed with %d", szFunction, GetLastError());
 
 		lpszStrings[0] = KAC_SERVICE_NAME;
 		lpszStrings[1] = Buffer;
@@ -173,11 +207,11 @@ VOID SvsReportEvent(LPTSTR szFunction)
 		DeregisterEventSource(hEventSource);
 	}
 }
+
 //https://stackoverflow.com/questions/55906598/iswindows10orgreater-always-returns-false-even-with-manifest-file
 //normal IsWindows10OrGreater always returned false even when on windows 10.
 inline bool isWindows10OrGreater()
 {
-	
 	INT32(NTAPI * RtlGetVersion)(PRTL_OSVERSIONINFOW lpVersionInformation) = nullptr;
 	HMODULE ntdll = GetModuleHandle(L"ntdll.dll");
 	if (ntdll == NULL)
@@ -204,41 +238,15 @@ inline bool isWindows10OrGreater()
 	return false;
 }
 
-
 int main(int argc, char** argv) {
-
 	if (!isWindows10OrGreater()) {
 		MessageBoxA(0, "Only supports Windows 10 or greater", "Error", MB_OK);
 		return 0;
-	}	
-	if (ServiceExists() == FALSE) {
-		CreateKACService();
 	}
-
-	auto scm = OpenSCManagerA(0, 0, SC_MANAGER_ALL_ACCESS);
-	if (scm) {
-		auto svs = OpenServiceA(scm, KAC_SERVICE_NAME, SC_MANAGER_ALL_ACCESS);
-		if (svs == 0 && GetLastError() == ERROR_SERVICE_DOES_NOT_EXIST) {
-			std::cout << "Can't get OpenKAC service. It doesn't exsist" << std::endl;
-			return ERROR_SERVICE_DOES_NOT_EXIST;
-		}
-		else if (svs == 0)
-			std::cout << "Can't get OpenKAC service" << std::endl;
-		std::cout << "Starting Service" << std::endl;
-		if (StartServiceA(svs, 0, 0) == 0) {
-			auto err = GetLastError();
-			std::cout << "StartService failed: " << err << std::endl;
-			return err;
-		}
-	}
-	else
-		std::cout << "Can't open services manager" << std::endl;
-	SERVICE_TABLE_ENTRYA ste[] = { {KAC_SERVICE_NAME, (LPSERVICE_MAIN_FUNCTIONA)ServiceProc},{0,0} };
-	if (StartServiceCtrlDispatcherA(ste)) {
+	SERVICE_TABLE_ENTRYA ste[] = { {(char*)KAC_SERVICE_PROC_NAME, (LPSERVICE_MAIN_FUNCTIONA)ServiceProc},{0,0} };
+	if (StartServiceCtrlDispatcherA(ste) != 0) {
 		auto err = GetLastError();
-		std::cout << "StartServiceCtrlDispatcher error: "<< err << std::endl;
-
+		std::cout << "StartServiceCtrlDispatcher error: " << err << std::endl;
 		return err;
 	}
-
 }

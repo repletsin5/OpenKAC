@@ -1,17 +1,4 @@
-#include "Driver.hpp"
-
-extern "C"
-{
-#include <ntddk.h>
-#include <stddef.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-}
-#define	KAC_BC_POOL_ALLOC_FAILED 0x02
-#define	KAC_BC_TERMINATE 0xff
-#define RT_TAG 'okac'
+#include "Memory.hpp"
 #pragma code_seg("PAGE")
 #pragma push("new")
 void* __cdecl operator new(size_t size) {
@@ -26,17 +13,21 @@ void* __cdecl operator new(size_t size) {
 	KeBugCheckEx(KMODE_EXCEPTION_NOT_HANDLED, KAC_BC_POOL_ALLOC_FAILED,0,0,0);
 }
 
-void* __cdecl operator new(size_t size, POOL_FLAGS flags) {
+
+
+void* __cdecl operator new[](size_t size) {
 	PAGED_CODE();
+
 	if (size == 0) size = 1;
 
-	if (auto memptr = ExAllocatePool2(flags, size, RT_TAG))
+	if (auto memptr = ExAllocatePool2(POOL_FLAG_NON_PAGED_EXECUTE, size, RT_TAG))
 	{
 		return memptr;
 	}
 	KdBreakPoint();
 	KeBugCheckEx(KMODE_EXCEPTION_NOT_HANDLED, KAC_BC_POOL_ALLOC_FAILED, 0, 0, 0);
 }
+
 #pragma pop("new")
 #pragma push("delete")
 
@@ -54,18 +45,7 @@ void __cdecl operator delete(void* memptr,size_t)
 	if (memptr == nullptr) return;
 	ExFreePoolWithTag(memptr, RT_TAG);
 }
-void* __cdecl operator new[](size_t size) {
-	PAGED_CODE();
 
-	if (size == 0) size = 1;
-
-	if (auto memptr = ExAllocatePool2(POOL_FLAG_NON_PAGED_EXECUTE, size, RT_TAG))
-	{
-		return memptr;
-	}
-	KdBreakPoint();
-	KeBugCheckEx(DRIVER_VIOLATION, KAC_BC_POOL_ALLOC_FAILED, 0, 0, 0);
-}
 
 void __cdecl operator delete[](void* memptr)
 {

@@ -2,15 +2,15 @@
 
 Module Name:
 
-    Trace.h
+	Trace.h
 
 Abstract:
 
-    Header file for the debug tracing related function defintions and macros.
+	Header file for the debug tracing related function defintions and macros.
 
 Environment:
 
-    Kernel mode
+	Kernel mode
 
 --*/
 
@@ -28,7 +28,7 @@ Environment:
         WPP_DEFINE_BIT(TRACE_DRIVER)                                   \
         WPP_DEFINE_BIT(TRACE_DEVICE)                                   \
         WPP_DEFINE_BIT(TRACE_QUEUE)                                    \
-        )                             
+        )
 
 #define WPP_FLAG_LEVEL_LOGGER(flag, level)                                  \
     WPP_LEVEL_LOGGER(flag)
@@ -39,11 +39,11 @@ Environment:
 
 #define WPP_LEVEL_FLAGS_LOGGER(lvl,flags) \
            WPP_LEVEL_LOGGER(flags)
-               
+
 #define WPP_LEVEL_FLAGS_ENABLED(lvl, flags) \
            (WPP_LEVEL_ENABLED(flags) && WPP_CONTROL(WPP_BIT_ ## flags).Level >= lvl)
 
-//           
+//
 // WPP orders static parameters before dynamic parameters. To support the Trace function
 // defined below which sets FLAGS=MYDRIVER_ALL_INFO, a custom macro must be defined to
 // reorder the arguments to what the .tpl configuration file expects.

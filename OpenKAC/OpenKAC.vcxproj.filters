@@ -23,6 +23,39 @@
     <Filter Include="Source Files\runtime">
       <UniqueIdentifier>{532aa3ba-488f-46e3-a6fb-42d7d56fa6d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\BlackBone">
+      <UniqueIdentifier>{c4f53e85-7410-443b-931e-e49d3d0409c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BlackBone">
+      <UniqueIdentifier>{4b26be85-3dc1-4b18-9029-ba2ee2af8cf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\KPDB">
+      <UniqueIdentifier>{5a64b8a7-cf94-496a-b501-10f4aeff306e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\KPDB">
+      <UniqueIdentifier>{24a88f21-507d-439a-a55c-6a02af8f7551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Solar">
+      <UniqueIdentifier>{dfe233ed-f797-47b0-a663-3fe9633877a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solar">
+      <UniqueIdentifier>{887b8b82-bb3a-4482-98f2-6ea1e0ea570d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solar\Hardware">
+      <UniqueIdentifier>{7f81ae13-b1ef-4f50-aad6-0c0c7201eedf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solar\Hardware\DMA">
+      <UniqueIdentifier>{b2801db5-e82a-4814-a99f-b931645f5d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solar\Drivers">
+      <UniqueIdentifier>{d4410e73-c51c-49a2-bb31-51f40b3355ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solar\Hardware\HWID">
+      <UniqueIdentifier>{d5e11b47-885d-473f-bc49-d3af3d55672a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Solar\Traces">
+      <UniqueIdentifier>{0fd39613-8c7a-43c7-8a15-0b40a7e585d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Inf Include="OpenKAC.inf">
@@ -45,13 +78,115 @@
     <ClInclude Include="AntiCheat.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skCrypter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DriverVerification.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\Helpers.h">
+      <Filter>Header Files\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\StackMaster.hpp">
+      <Filter>Header Files\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="Integrity.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory.hpp">
+      <Filter>Header Files\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\lonesha256.h">
+      <Filter>Header Files\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\apiset.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\BlackBoneDef.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\BlackBoneDrv.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\Imports.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\Loader.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\NativeEnums.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\NativeStructs.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\NativeStructs7.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\NativeStructs8.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\NativeStructs10.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\NativeStructs81.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\PEStructs.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\Private.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\Remap.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\Routines.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\Utils.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\VadHelpers.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBone\VadRoutines.h">
+      <Filter>Header Files\BlackBone</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\Helpers.hpp">
+      <Filter>Header Files\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="KPDB\kpdb.h">
+      <Filter>Header Files\KPDB</Filter>
+    </ClInclude>
+    <ClInclude Include="KPDB\ntutils.h">
+      <Filter>Header Files\KPDB</Filter>
+    </ClInclude>
+    <ClInclude Include="KPDB\tpi.h">
+      <Filter>Header Files\KPDB</Filter>
+    </ClInclude>
+    <ClInclude Include="Solar\Solar.hpp">
+      <Filter>Header Files\Solar</Filter>
+    </ClInclude>
+    <ClInclude Include="Solar\Solar_ioctls.hpp">
+      <Filter>Header Files\Solar</Filter>
+    </ClInclude>
+    <ClInclude Include="Solar\Hardware\HWID\Solar_HWID.hpp">
+      <Filter>Header Files\Solar\Hardware\HWID</Filter>
+    </ClInclude>
+    <ClInclude Include="Solar\Hardware\Solar_PCIE.hpp">
+      <Filter>Header Files\Solar\Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="Solar\Solar_Status.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Driver.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core.cpp">
-      <Filter>Source Files\runtime</Filter>
     </ClCompile>
     <ClCompile Include="AntiCheat.cpp">
       <Filter>Source Files</Filter>
@@ -59,5 +194,74 @@
     <ClCompile Include="ioctls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DriverVerification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\memory.cpp">
+      <Filter>Source Files\runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\Helpers.cpp">
+      <Filter>Source Files\runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="Integrity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Dispatch.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Inject.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\ldrreloc.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Loader.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\MMap.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\NotifyRoutine.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Private.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Remap.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Routines.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\Utils.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\VadHelpers.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBone\VadRoutines.c">
+      <Filter>Source Files\BlackBone</Filter>
+    </ClCompile>
+    <ClCompile Include="KPDB\kpdb.c">
+      <Filter>Source Files\KPDB</Filter>
+    </ClCompile>
+    <ClCompile Include="KPDB\ntutils.c">
+      <Filter>Source Files\KPDB</Filter>
+    </ClCompile>
+    <ClCompile Include="KPDB\tpi.c">
+      <Filter>Source Files\KPDB</Filter>
+    </ClCompile>
+    <ClCompile Include="Solar\Solar.cpp">
+      <Filter>Source Files\Solar</Filter>
+    </ClCompile>
+    <ClCompile Include="Solar\Solar_ioctls.cpp">
+      <Filter>Source Files\Solar</Filter>
+    </ClCompile>
+    <ClCompile Include="Solar\Hardware\Solar_PCIE.cpp">
+      <Filter>Source Files\Solar</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BlackBone\Licence.md" />
   </ItemGroup>
 </Project>
