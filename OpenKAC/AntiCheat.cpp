@@ -71,6 +71,7 @@ void OpenKAC::AntiCheat::CreateThread()
 		(void**)&acThread,
 		NULL);
 
+	
 	//ZwClose(acThreadHandle);
 	//if (acThread) {
 	//	KeWaitForSingleObject(acThread,

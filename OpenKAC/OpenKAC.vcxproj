@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Musa.libwsk.1.0.1\build\native\Musa.libwsk.props" Condition="Exists('..\packages\Musa.libwsk.1.0.1\build\native\Musa.libwsk.props')" />
+  <Import Project="..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.props" Condition="Exists('..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -82,6 +84,7 @@
     <ClInclude Include="runtime\StackMaster.hpp" />
     <ClInclude Include="skCrypter.h" />
     <ClInclude Include="Solar\Hardware\HWID\Solar_HWID.hpp" />
+    <ClInclude Include="Solar\Process\Solar_privlaged_process.h" />
     <ClInclude Include="Solar\Solar.hpp" />
     <ClInclude Include="Solar\Solar_ioctls.hpp" />
     <ClInclude Include="Solar\Solar_Status.hpp" />
@@ -238,7 +241,7 @@
       <FileDigestAlgorithm>SHA512</FileDigestAlgorithm>
     </DriverSign>
     <Link>
-      <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/INTEGRITYCHECK /PDBALTPATH:%_PDB %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>Aux_Klib.lib;cng.lib;Ntstrsafe.lib;NtosKrnl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -276,8 +279,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BlackBone\Licence.md" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.targets" Condition="Exists('..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.props'))" />
+    <Error Condition="!Exists('..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YY.NuGet.Import.Helper.1.0.1\build\native\YY.NuGet.Import.Helper.targets'))" />
+    <Error Condition="!Exists('..\packages\Musa.libwsk.1.0.1\build\native\Musa.libwsk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Musa.libwsk.1.0.1\build\native\Musa.libwsk.props'))" />
+  </Target>
 </Project>

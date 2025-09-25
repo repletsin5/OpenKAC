@@ -26,7 +26,6 @@ OpenKAC::Solar::Status OpenKAC::Solar::PCIE::PCIE_Device::PCIE_Enumorate()
 
 	OpenKAC::Solar::Status  status = OpenKAC::Solar::Status::STATUS_SUCCESSFUL;
 	klib::ukString PCIdriverName(L"\\Driver\\pci");
-	//UNICODE_STRING PCIdriverName = RTL_CONSTANT_STRING(L"\\Driver\\pci");
 	PDRIVER_OBJECT PCIdriverObject = 0;
 	klib::Modules::GetDriverObjecFromDeviceName(&PCIdriverObject, PCIdriverName);
 
@@ -50,7 +49,7 @@ OpenKAC::Solar::Status OpenKAC::Solar::PCIE::PCIE_Device::PCIE_Enumorate()
 
 
 
-	for (auto obj : list) {
+	for (auto& obj : list) {
 		if (obj != 0) {
 			KdPrintEx((0, 0, "[OpenKAC] found pci device obj at 0x%I64x\n", (UINT64)obj));
 

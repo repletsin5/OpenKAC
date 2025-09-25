@@ -8,11 +8,10 @@ EXTERN_C NTSYSAPI void* RtlLookupFunctionEntry(
 	PUNWIND_HISTORY_TABLE HistoryTable
 );
 
-
-typedef struct _EX_PUSH_LOCK
+#ifndef HAS_WIN10_STRUCTS
+typedef union _EX_PUSH_LOCK
 {
-	union
-	{
+
 		struct
 		{
 			ULONGLONG Locked : 1;                                             //0x0
@@ -23,9 +22,9 @@ typedef struct _EX_PUSH_LOCK
 		};
 		ULONGLONG Value;                                                    //0x0
 		VOID* Ptr;                                                          //0x0
-	};
+	
 } __EX_PUSH_LOCK, * P__EX_PUSH_LOCK;
-
+#endif
 struct _DEVICE_MAP
 {
 	struct _OBJECT_DIRECTORY* DosDevicesDirectory;                          //0x0
@@ -89,6 +88,10 @@ namespace klib {
 		static UINT64 FindPatternIDA(klib::PSysModule mod, const char* pattern, size_t patternSize);
 		static void GetSystemModuleBase(IN OUT PSysModule mod, IN const wchar_t* name);
 		static void GetDriverObjecFromDeviceName(IN OUT PDRIVER_OBJECT* obj, IN klib::ukString& name);
+
+		/**
+		* This requires 
+		*/
 		static void GetDriverObjects(IN OUT klib::std::array<PDRIVER_OBJECT> &objs);
 
 		//refrerence https://www.unknowncheats.me/forum/3238153-post14.html -- fixed issue with it

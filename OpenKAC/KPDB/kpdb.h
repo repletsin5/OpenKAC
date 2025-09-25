@@ -16,7 +16,12 @@ C_ASSERT(STRSAFE_MAX_CCH > 1);
 #define STRSAFE_MAX_LENGTH  (STRSAFE_MAX_CCH - 1)   // max buffer length, in characters, that we support
 #include "tpi.h"
 
-const char kMagic[32];
+static const char kMagic[32] = {
+	0x4D, 0x69, 0x63, 0x72, 0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20, 0x43, 0x2F,
+	0x43, 0x2B, 0x2B, 0x20, 0x4D, 0x53, 0x46, 0x20, 0x37, 0x2E, 0x30, 0x30,
+	0x0D, 0x0A, 0x1A, 0x44, 0x53, 0x00, 0x00, 0x00
+};
+
 
 #pragma pack(push, 1)
 typedef struct _SuperBlock
@@ -69,7 +74,7 @@ typedef struct _PUBSYM32
 	char name[1];    // Length-prefixed name
 }PUBSYM32;
 
-typedef enum SYM_ENUM_e {
+enum SYM_ENUM_e {
 	// [�]
 	S_CONSTANT = 0x1107,  // constant symbol
 	S_UDT = 0x1108,  // User defined type

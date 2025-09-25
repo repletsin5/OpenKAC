@@ -6,6 +6,7 @@ EXTERN_C_START
 #include <ntddk.h>
 #include <wdf.h>
 #include <initguid.h>
+#include "KPDB/kpdb.h"
 //
 // WDFDRIVER Events
 //
@@ -21,6 +22,15 @@ typedef struct _TD_CALLBACK_PARAMETERS {
     ACCESS_MASK AccessBitsToSet;
 }
 TD_CALLBACK_PARAMETERS, * PTD_CALLBACK_PARAMETERS;
+
+inline static SYMBOL_DATA SymbolsDataCIDLL[2] = {
+    {
+        "g_HashCacheLock",
+    },
+    {
+        "g_PEProcessHashBucketList",
+    }
+};
 
 //
 // TD_CALLBACK_REGISTRATION

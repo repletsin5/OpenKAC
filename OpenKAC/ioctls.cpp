@@ -10,6 +10,7 @@ extern "C" {
 #include "AntiCheat.hpp"
 #include "Solar/Solar_ioctls.hpp"
 #include "Driver.hpp"
+#include "System.hpp"
 #include <climits>
 #include <ntstrsafe.h>
 #include <ntifs.h>
@@ -95,6 +96,7 @@ ioctls::DeviceControl(
 		return SENDBACK(KAC_INVALID_DATA_ADDRESS);
 	}
 	PINJECT_DLL dlldata;
+	PPDB_Info pdbInfo;
 	switch (ctrlCode)
 	{
 	case ioctls::setProcess:
@@ -167,6 +169,7 @@ ioctls::DeviceControl(
 		return SENDBACK(0);
 		break;	
 	case ioctls::pdbFiles:
+	{
 		//TODO verify who sent and validate pdb
 		if (data->size != sizeof(PDB_Info)) {
 			return SENDBACK(KAC_INCORRECT_DATA_SIZE);
@@ -174,11 +177,20 @@ ioctls::DeviceControl(
 		if (data->sendbuf == 0) {
 			return SENDBACK(KAC_INVALID_SEND_INFO);
 		}
-		MEMORY_BASIC_INFORMATION  info;
+		MEMORY_BASIC_INFORMATION info;
 		ZwQueryVirtualMemory(caller, data->sendbuf, MemoryBasicInformation, &info, sizeof(MEMORY_BASIC_INFORMATION), 0);
-		if (info.State == MEM_FREE && info.RegionSize < data->size ) {
+		if (info.State == MEM_FREE && info.RegionSize < data->size) {
 			return SENDBACK(KAC_INVALID_SEND_INFO);
 		}
+		pdbInfo = (PPDB_Info)data->sendbuf;
+		if (strcmp(pdbInfo->moduleName, "ci.dll") == 0) {
+			KpdbGetPDBSymbolOffset(pdbInfo->dataPtr, SymbolsDataCIDLL);
+			klib::SysModule mod;
+			klib::Modules::GetSystemModuleBase(&mod, L"ci.dll");
+			KpdbConvertSecOffsetToRVA(mod.addr, SymbolsDataCIDLL);
+			KdPrintEx((0, 0, "g_PEProcessHashBucketList addr: 0x%i64x", SymbolsDataCIDLL[1].SymbolRVA));
+		}
+	}
 		//PPDB_Info pdbInfo = (PPDB_Info)data->sendbuf;
 		//VOID* pdbInfoCopy = 0;
 		//SIZE_T sizeAllocated = data->size;

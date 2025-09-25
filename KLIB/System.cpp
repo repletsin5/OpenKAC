@@ -159,13 +159,12 @@ EXTERN_C PLIST_ENTRY PsLoadedModuleList;
 
 	void klib::Modules::GetDriverObjects(IN OUT klib::std::array<PDRIVER_OBJECT>& objs)
 	{
-
+		//TODO: requires array to be implemented.
 		return;
 
 		OBJECT_ATTRIBUTES attributes;
 		HANDLE directoryHandle = 0;
 		POBJECT_DIRECTORY driverRootDir;
-		PDRIVER_OBJECT driver = NULL;
 		NTSTATUS status = STATUS_SUCCESS;
 
 		klib::ukString baseDirName(L"\\driver");
@@ -173,12 +172,12 @@ EXTERN_C PLIST_ENTRY PsLoadedModuleList;
 
 		status = ZwOpenDirectoryObject(&directoryHandle, DIRECTORY_ALL_ACCESS, &attributes);
 		if (!NT_SUCCESS(status)) {
-			KdPrintEx((0, 0, "ZwOpenDirectoryObject failed with status %x\n", status));
+			KdPrintEx((0, 0, "[kLib] ZwOpenDirectoryObject failed with status %\n", status));
 			return;
 		}
 		status = ObReferenceObjectByHandle(directoryHandle, DIRECTORY_ALL_ACCESS, 0, KernelMode, (void**)&driverRootDir, 0);
 		if (!NT_SUCCESS(status)) {
-			KdPrintEx((0, 0, "ObReferenceObjectByHandle failed with status %x\n", status));
+			KdPrintEx((0, 0, "[kLib] ObReferenceObjectByHandle failed with status %x\n", status));
 			ZwClose(directoryHandle);
 			return;
 		}
@@ -196,21 +195,35 @@ EXTERN_C PLIST_ENTRY PsLoadedModuleList;
 			objs = klib::std::array<PDRIVER_OBJECT>(size);
 
 
+			UINT64 totalCount = 0;
 			for (int i = 0; i < size - 1; i++) {
 
 				auto entry = driverRootDir->HashBuckets[i];
 				if (!isValidKernelAddress((UINT64)entry)) {
 					KdPrintEx((0, 0, "[kLib] Invalid driver object hash entry 0x%I64x\n", (UINT64)entry));
+					continue;
 				}
 				while (isValidKernelAddress((UINT64)entry)) {
-					driver = (PDRIVER_OBJECT)entry->Object;
 
-
+					totalCount++;
 					entry = entry->ChainLink;
 				}
 
 			}
+			for (int i = 0; i < size - 1; i++) {
 
+				auto entry = driverRootDir->HashBuckets[i];
+				if (!isValidKernelAddress((UINT64)entry)) {
+					KdPrintEx((0, 0, "[kLib] Invalid driver object hash entry 0x%I64x\n", (UINT64)entry));
+					continue;
+				}
+				while (isValidKernelAddress((UINT64)entry)) {
+
+					totalCount++;
+					entry = entry->ChainLink;
+				}
+
+			}
 			ExReleasePushLockExclusiveEx(&driverRootDir->Lock, 0);
 		}
 		KeLeaveCriticalRegion();

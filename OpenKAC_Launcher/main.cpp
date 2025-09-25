@@ -286,11 +286,11 @@ int main(int argc, char** argv) {
 	HANDLE proc = (HANDLE)GetCurrentProcessId();
 	std::cout << "sending proc: " << std::hex << proc << std::dec << std::endl;
 	SendProcID(driver, proc);
-	std::string ntos_path = std::string(std::getenv("systemroot")) + "\\System32\\ntoskrnl.exe";
-	ez::pdb ntos_pdb = ez::pdb(ntos_path, "https://msdl.szdyg.cn/download/symbols");
+	std::string ci_path = std::string(std::getenv("systemroot")) + "\\System32\\ci.dll";
+	ez::pdb ntos_pdb = ez::pdb(ci_path, "https://msdl.szdyg.cn/download/symbols");
 	ntos_pdb.init();
 
-	std::ifstream file(ntos_path, std::ios::binary | std::ios::ate);
+	std::ifstream file(ci_path, std::ios::binary | std::ios::ate);
 	std::streamsize size = file.tellg();
 	file.seekg(0, std::ios::beg);
 	char* buffer = (char*)VirtualAlloc(0,size,MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -300,7 +300,7 @@ int main(int argc, char** argv) {
 	{
 		SetLastError(ERROR_ACCESS_DENIED);
 	}
-	SendPDB(driver, "ntoskrnl.exe", buffer,size);
+	SendPDB(driver, "ci.dll", buffer,size);
 	std::cout << "Sending DLL" << std::endl;
 	SendACModule(driver, "");
 	std::cin.get();

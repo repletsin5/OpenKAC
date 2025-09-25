@@ -183,6 +183,9 @@
     <ClInclude Include="Solar\Solar_Status.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Solar\Process\Solar_privlaged_process.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Driver.cpp">
@@ -263,5 +266,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BlackBone\Licence.md" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

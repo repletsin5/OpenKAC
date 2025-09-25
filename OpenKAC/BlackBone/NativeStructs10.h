@@ -1,5 +1,10 @@
 #pragma once
 
+
+#ifndef HAS_WIN10_STRUCTS
+
+#define HAS_WIN10_STRUCTS
+
 //
 // Native structures W10 technical preview x64, build 9841
 //
@@ -28,6 +33,7 @@ typedef struct _RTL_AVL_TREE // Size=8
     unsigned __int64 NumberGenericTableElements; 
 } RTL_AVL_TREE, *PRTL_AVL_TREE, MM_AVL_TABLE, *PMM_AVL_TABLE;
 
+
 union _EX_PUSH_LOCK // Size=8
 {
     struct
@@ -39,9 +45,8 @@ union _EX_PUSH_LOCK // Size=8
         unsigned __int64 Shared : 60; // Size=8 Offset=0 BitOffset=4 BitCount=60
     };
     unsigned __int64 Value; // Size=8 Offset=0
-    void * Ptr; // Size=8 Offset=0
+    void* Ptr; // Size=8 Offset=0
 };
-
 struct _MMVAD_FLAGS // Size=4
 {
     unsigned long VadType: 3; // Size=4 Offset=0 BitOffset=0 BitCount=3
@@ -191,3 +196,4 @@ typedef struct _API_SET_NAMESPACE_ARRAY_10
 #pragma warning(default : 4214 4201)
 
 #define GET_VAD_ROOT(Table) Table->BalancedRoot
+#endif // !HAS_WIN10_STRUCTS
